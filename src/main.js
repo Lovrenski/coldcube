@@ -46,6 +46,34 @@ document.body.appendChild( renderer.domElement );
 // Controls
 const controls = new OrbitControls(camera, renderer.domElement);
 
+// Particles
+scene.fog = new THREE.FogExp2( 0x0047ab, 0.09, 50 );
+
+const geometry = new THREE.BufferGeometry();
+const vertices = [];
+const size = 2000;
+
+for (let i = 0; i < 5000; i++){
+  const x = (Math.random() * size + Math.random * size) / 2 - size / 2;
+  const y = (Math.random() * size + Math.random * size) / 2 - size / 2;
+  const z = (Math.random() * size + Math.random * size) / 2 - size / 2;
+
+  vertices.push(x, y, z);
+}
+
+geometry.setAttribute(
+  "position",
+  new THREE.Float32BufferAttribute(vertices, 3),
+);
+
+const material = new THREE.PointsMaterial({
+  size: 2,
+  color: 0xffffff,
+});
+
+const particles = new THREE.Points(geometry, material);
+scene.add(particles);
+
 // Ground
 const groundBody = new CANNON.Body({
   shape: new CANNON.Box(new CANNON.Vec3(15, 0.5, 15))
@@ -150,8 +178,32 @@ for (let i = 0; i < 3; i++) {
 
 // Animate
 function animate() {
-  moveObstacles(powerups, 0.1, 8, -8, -5, -10);
-  moveObstacles(enemies, 0.2, 8, -8, -5, -10);
+
+  particles.rotation.x +=.0001;
+  particles.rotation.y +=.0001;
+  particles.rotation.z +=.0005;
+
+  if(!gameOver){
+    moveObstacles(powerups, 0.1, 8, -8, -5, -10);
+    moveObstacles(enemies, 0.2, 8, -8, -5, -10);
+  } else {
+    pointsUI.textContent = "GAME OVER";
+    playerBody.position.set(playerBody.position.x, 5, 5);
+
+    enemies.forEach((el) => {
+      scene.remove(el.mesh);
+      world.removeBody(el.body);
+    });
+    powerups.forEach((el) => {
+      scene.remove(el.mesh);
+      world.removeBody(el.body);
+    });
+
+    if(playerBody.position.z > camera.position.z){
+      scene.remove(player);
+      world.removeBody(playerBody);
+    }
+  }
   
   controls.update();
 
