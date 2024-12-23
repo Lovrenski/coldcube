@@ -54,9 +54,9 @@ const vertices = [];
 const size = 2000;
 
 for (let i = 0; i < 5000; i++){
-  const x = (Math.random() * size + Math.random * size) / 2 - size / 2;
-  const y = (Math.random() * size + Math.random * size) / 2 - size / 2;
-  const z = (Math.random() * size + Math.random * size) / 2 - size / 2;
+  const x = (Math.random() * size + Math.random() * size) / 2 - size / 2;
+  const y = (Math.random() * size + Math.random() * size) / 2 - size / 2;
+  const z = (Math.random() * size + Math.random() * size) / 2 - size / 2;
 
   vertices.push(x, y, z);
 }
